@@ -20,7 +20,6 @@ public class ExchangeController {
     @PostMapping("/exchange")
     public ResponseEntity<String> addNewClient(@RequestBody @Valid ExchangeDto exchangeDto) {
         Objects.requireNonNull(exchangeDto);
-        System.out.println(exchangeDto);
         String balanceValue = service.exchangeBalance(exchangeDto);
         return ResponseEntity.ok(balanceValue);
     }
