@@ -1,5 +1,6 @@
 package com.mariolorian.wheelerdealer.service;
 
+import com.mariolorian.wheelerdealer.enums.Currency;
 import com.mariolorian.wheelerdealer.exception.NoSuchAccountFoundException;
 import com.mariolorian.wheelerdealer.exception.UserWithSuchPeselAlreadyExistedException;
 import com.mariolorian.wheelerdealer.model.dto.AccountDto;
@@ -7,7 +8,6 @@ import com.mariolorian.wheelerdealer.model.dto.NewClientDto;
 import com.mariolorian.wheelerdealer.model.entity.Account;
 import com.mariolorian.wheelerdealer.model.entity.Client;
 import com.mariolorian.wheelerdealer.model.entity.SubAccount;
-import com.mariolorian.wheelerdealer.enums.Currency;
 import com.mariolorian.wheelerdealer.repository.AccountRepository;
 import com.mariolorian.wheelerdealer.repository.ClientRepository;
 import com.mariolorian.wheelerdealer.repository.SubAccountRepository;
@@ -39,10 +39,10 @@ public class CommonAccountService implements AccountService {
 
     @Transactional
     @Override
-    public String addNewAccount(NewClientDto clientDto) {
+    public String createNewAccount(NewClientDto clientDto) {
         Objects.requireNonNull(clientDto);
         if (clientRepository.existsByPesel(clientDto.getPesel())) {
-            log.error("User with a given PESEL is already registered");
+            log.warn("User with a given PESEL is already registered");
             throw new UserWithSuchPeselAlreadyExistedException();
         }
         SubAccount plnSubAccount = SubAccount.builder()
@@ -63,28 +63,33 @@ public class CommonAccountService implements AccountService {
 //        Account accountFromDB = repository.save(account);
         List<SubAccount> subAccountList = new ArrayList<>();
         subAccountRepository.saveAll(subAccounts).iterator().forEachRemaining(subAccountList::add);
-        Client client1 = clientRepository.save(client);
-        Account account = repository.save(new Account(client1.getPesel(), client1, subAccountList));
+        Client newClient = clientRepository.save(client);
+        Account account = repository.save(new Account(newClient.getPesel(), newClient, subAccountList));
         return account.getId();
     }
 
     @Override
     public AccountDto receiveAccountDetails(String id) {
-        return repository.findById(id).map(
-                        account -> AccountDto.builder()
-                                .id(account.getId())
-                                .client(AccountDto.ClientDto.builder()
-                                        .pesel(account.getClient().getPesel())
-                                        .firstName(account.getClient().getFirstName())
-                                        .lastName(account.getClient().getLastName())
-                                        .build())
-                                .subAccounts(account.getSubAccounts().stream().map(subAccount -> AccountDto.SubAccountDto.builder()
-                                                .currency(subAccount.getCurrency())
-                                                .balance(subAccount.getBalance().setScale(2, RoundingMode.HALF_EVEN).toString())
-                                                .build())
-                                        .toList())
-                                .build())
+        return repository.findById(id)
+                .map(this::accountDtoMapper)
                 .orElseThrow(NoSuchAccountFoundException::new);
+    }
+
+    private AccountDto accountDtoMapper(Account account) {
+        return AccountDto.builder()
+                .id(account.getId())
+                .client(AccountDto.ClientDto.builder()
+                        .pesel(account.getClient().getPesel())
+                        .firstName(account.getClient().getFirstName())
+                        .lastName(account.getClient().getLastName())
+                        .build())
+                .subAccounts(account.getSubAccounts().stream()
+                        .map(subAccount -> AccountDto.SubAccountDto.builder()
+                                .currency(subAccount.getCurrency())
+                                .balance(subAccount.getBalance().setScale(2, RoundingMode.HALF_EVEN).toString())
+                                .build())
+                        .toList())
+                .build();
     }
 
     @Override

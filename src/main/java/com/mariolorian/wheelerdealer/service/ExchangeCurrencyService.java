@@ -30,7 +30,7 @@ public class ExchangeCurrencyService implements ExchangeService {
     public String exchangeBalance(ExchangeDto exchangeDto) {
         Objects.requireNonNull(exchangeDto);
         if (!accountService.existsById(exchangeDto.getId())) {
-            log.error("There is no account with a given id");
+            log.warn("There is no account with a given id");
             throw new NoSuchAccountFoundException();
         }
         List<SubAccount> subAccounts = accountService.receiveSubAccounts(exchangeDto.getId());
@@ -83,7 +83,7 @@ public class ExchangeCurrencyService implements ExchangeService {
     private void checkTransaction(BigDecimal currencyQuantity, BigDecimal subAccount) {
         int status = currencyQuantity.compareTo(subAccount);
         if (status > 0) {
-            log.error("There is no enough funds to conduct a transaction");
+            log.warn("There is no enough funds to conduct a transaction");
             throw new NotEnoughFoundsException();
         }
     }

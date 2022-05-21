@@ -11,7 +11,7 @@ Simple exchange currency application in pair PLN-USD
     "initialBalanceInPln": "100000.00"
   } 
   ```
-- GET: localhost:8080/accounts/76040407219 - get information about account
+- GET: localhost:8080/accounts/79020416364 - get information about account
 - POST: localhost:8080/exchange - exchange PLN for USD
   ```json
   {

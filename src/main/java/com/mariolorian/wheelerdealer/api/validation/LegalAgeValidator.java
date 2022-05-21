@@ -12,7 +12,7 @@ public class LegalAgeValidator implements ConstraintValidator<LegalAgeConstraint
     public boolean isValid(String pesel, ConstraintValidatorContext context) {
         byte[] peselInBytes = new byte[11];
         IntStream.range(0, 11)
-                .forEachOrdered(index -> peselInBytes[index] = Byte.parseByte(pesel.substring(index, index + 1)));
+                .forEach(index -> peselInBytes[index] = Byte.parseByte(pesel.substring(index, index + 1)));
         int birthYear = getBirthYear(peselInBytes);
         int birthMonth = getBirthMonth(peselInBytes);
         int birthDay = getBirthDay(peselInBytes);

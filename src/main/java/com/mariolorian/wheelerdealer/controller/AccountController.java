@@ -24,8 +24,7 @@ public class AccountController {
     @PostMapping("/accounts")
     public ResponseEntity<String> addNewAccount(@RequestBody @Valid NewClientDto newClientDto) {
         Objects.requireNonNull(newClientDto);
-        System.out.println(newClientDto);
-        String id = service.addNewAccount(newClientDto);
+        String id = service.createNewAccount(newClientDto);
         URI accountLocation = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(id)

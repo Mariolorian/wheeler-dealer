@@ -21,7 +21,7 @@ public class ExchangeDto {
     String operation;
 
     @NotNull
-    @Pattern(regexp = "^\\d*[.]\\d{2}", message = "Invalid input")
+    @Pattern(regexp = "^\\d+[.]\\d{2}$", message = "Invalid input")
     String balance;
 
 }

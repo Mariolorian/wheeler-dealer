@@ -12,7 +12,7 @@ public interface AccountService {
 
     boolean existsById(String id);
 
-    String addNewAccount(NewClientDto clientDto);
+    String createNewAccount(NewClientDto clientDto);
 
     AccountDto receiveAccountDetails(String id);
 

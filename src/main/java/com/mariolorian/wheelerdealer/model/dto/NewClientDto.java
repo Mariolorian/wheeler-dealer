@@ -16,15 +16,15 @@ public class NewClientDto {
     String pesel;
 
     @NotNull
-    @Pattern(regexp = "^[A-Z][a-z]*$", message = "Invalid input. First name should contains only letter")
+    @Pattern(regexp = "^[A-Z][a-z]+$", message = "Invalid input. First name should contains only letter")
     String firstName;
 
     @NotNull
-    @Pattern(regexp = "^[A-Z][a-z]*$|^[A-Z][a-z]*-[A-Z][a-z]*$", message = "Invalid input. Last name should contains only letters")
+    @Pattern(regexp = "^[A-Z][a-z]+$|^[A-Z][a-z]+-[A-Z][a-z]+$", message = "Invalid input. Last name should contains only letters")
     String lastName;
 
     @NotNull
-    @Pattern(regexp = "^\\d*[.]\\d{2}", message = "Invalid input")
+    @Pattern(regexp = "^\\d+[.]\\d{2}$", message = "Invalid input")
     String initialBalanceInPln;
 
 }
