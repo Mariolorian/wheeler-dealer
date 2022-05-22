@@ -1,12 +1,12 @@
 package com.mariolorian.wheelerdealer.service;
 
-import com.mariolorian.wheelerdealer.exception.NotEnoughFoundsException;
+import com.mariolorian.wheelerdealer.enums.Currency;
+import com.mariolorian.wheelerdealer.enums.Operation;
 import com.mariolorian.wheelerdealer.exception.NoSuchAccountFoundException;
+import com.mariolorian.wheelerdealer.exception.NotEnoughFoundsException;
 import com.mariolorian.wheelerdealer.model.dto.CurrencyDto;
 import com.mariolorian.wheelerdealer.model.dto.ExchangeDto;
 import com.mariolorian.wheelerdealer.model.entity.SubAccount;
-import com.mariolorian.wheelerdealer.enums.Currency;
-import com.mariolorian.wheelerdealer.enums.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class ExchangeCurrencyService implements ExchangeService {
 
-    private final CurrencyService service;
+    private final CurrencyService nbpCurrencyResilientService;
     private final AccountService accountService;
 
     @Override
@@ -59,7 +59,7 @@ public class ExchangeCurrencyService implements ExchangeService {
     }
 
     private BigDecimal askPln(BigDecimal currency) {
-        CurrencyDto currencyDto = service.receiveCurrentCurrencyStatus();
+        CurrencyDto currencyDto = nbpCurrencyResilientService.receiveCurrentCurrencyStatus();
         BigDecimal value = new BigDecimal(currencyDto.getRates().get(0).getBid().toString());
         return currency.multiply(value);
     }
@@ -75,7 +75,7 @@ public class ExchangeCurrencyService implements ExchangeService {
     }
 
     private BigDecimal bidPln(BigDecimal currency) {
-        CurrencyDto currencyDto = service.receiveCurrentCurrencyStatus();
+        CurrencyDto currencyDto = nbpCurrencyResilientService.receiveCurrentCurrencyStatus();
         BigDecimal value = new BigDecimal(currencyDto.getRates().get(0).getAsk().toString());
         return currency.divide(value, 2, RoundingMode.HALF_EVEN);
     }
